@@ -28,10 +28,12 @@ class MqttService
     public $will;				/* stores the will of the client */
     private $username;			/* stores username */
     private $password;			/* stores password */
+    private $qos;               /* quality of service */
     public $cafile;
 
-    function __construct($address, $port, $clientid, $cafile = NULL, $debug){
+    function __construct($address, $port, $clientid, $cafile = NULL, $qos, $debug){
         $this->debug = $debug;
+        $this->qos = $qos;
         $this->broker($address, $port, $clientid, $cafile);
     }
 
@@ -253,7 +255,7 @@ class MqttService
                 fclose($this->socket);
                 $this->connect_auto(false);
                 if(count($this->topics))
-                    $this->subscribe($this->topics);
+                    $this->subscribe($this->topics, $this->qos);
             }
 
             $byte = $this->read(1, true);
@@ -298,7 +300,7 @@ class MqttService
                 fclose($this->socket);
                 $this->connect_auto(false);
                 if(count($this->topics))
-                    $this->subscribe($this->topics);
+                    $this->subscribe($this->topics, $this->qos);
             }
         }
         return 1;
