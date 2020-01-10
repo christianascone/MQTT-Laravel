@@ -40,6 +40,8 @@ class Mqtt
     protected $password = null;
     protected $port = null;
     protected $debug = null;
+    protected $qos = 0;
+    protected $retain = 0;
 
     public function __construct()
     {
@@ -49,17 +51,21 @@ class Mqtt
         $this->cert_file = config('mqtt.certfile');
         $this->port      = config('mqtt.port');
         $this->debug     = config('mqtt.debug');
+        $this->qos       = config('mqtt.qos');
+        $this->retain    = config('mqtt.retain');
 
     }
 
 
-    public function ConnectAndPublish($topic, $msg)
+    public function ConnectAndPublish($topic, $msg, $client_id=null)
     {
-        $client = new MqttService($this->host,$this->port, rand(0,100), $this->cert_file, $this->debug);
+        $id = empty($client_id) ?  rand(0,999) : $client_id;
+
+        $client = new MqttService($this->host,$this->port, $id, $this->cert_file, $this->debug);
 
         if ($client->connect(true, null, $this->username, $this->password))
         {
-            $client->publish($topic,$msg);
+            $client->publish($topic,$msg, $this->qos, $this->retain);
             $client->close();
 
             return true;
@@ -69,5 +75,27 @@ class Mqtt
 
     }
 
+    public function ConnectAndSubscribe($topic, $proc, $client_id=null)
+    {
+        $id = empty($client_id) ?  rand(0,999) : $client_id;
+
+        $client = new MqttService($this->host,$this->port,$id, $this->cert_file, $this->debug);
+
+        if ($client->connect(true, null, $this->username, $this->password))
+        {
+            $topics[$topic] = array("qos" => 0, "function" => $proc);
+
+            $client->subscribe($topics, $this->qos);
+
+            while($client->proc())
+            {
+
+            }
+
+            $client->close();
+        }
+
+        return false;
+    }
 
 }
