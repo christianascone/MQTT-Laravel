@@ -126,7 +126,7 @@ class Mqtt
             {
                 $endtime = microtime(true);
                 $timediff = $endtime - $starttime;
-                $passed = Helper::secondsToTime($timediff);
+                $passed = Helper::timeToSeconds($timediff);
                 if($passed > $publish_ack_timeout_seconds) $run = false; // Stop running when timeout expires
             }
 
