@@ -62,7 +62,7 @@ class Mqtt
     {
         $id = empty($client_id) ?  rand(0,999) : $client_id;
 
-        $client = new MqttService($this->host,$this->port, $id, $this->cert_file, $this->qos, $this->publish_ack_timeout_seconds, $this->debug);
+        $client = new MqttService($this->host,$this->port, $id, $this->cert_file, $this->qos, $this->debug);
 
         if ($client->connect(true, null, $this->username, $this->password))
         {
@@ -80,7 +80,7 @@ class Mqtt
     {
         $id = empty($client_id) ?  rand(0,999) : $client_id;
 
-        $client = new MqttService($this->host,$this->port,$id, $this->cert_file, $this->qos, $this->publish_ack_timeout_seconds, $this->debug);
+        $client = new MqttService($this->host,$this->port,$id, $this->cert_file, $this->qos, $this->debug);
 
         if ($client->connect(true, null, $this->username, $this->password))
         {
@@ -103,7 +103,7 @@ class Mqtt
     {
         $id = empty($client_id) ?  rand(0,999) : $client_id;
 
-        $client = new MqttService($this->host,$this->port,$id, $this->cert_file, $this->qos, $this->publish_ack_timeout_seconds, $this->debug);
+        $client = new MqttService($this->host,$this->port,$id, $this->cert_file, $this->qos, $this->debug);
         $publish_ack_timeout_seconds = $publish_ack_timeout_seconds != null ? $publish_ack_timeout_seconds : $this->publish_ack_timeout_seconds;
 
         if ($client->connect(true, null, $this->username, $this->password))
