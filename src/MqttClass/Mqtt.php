@@ -99,7 +99,7 @@ class Mqtt
         return false;
     }
 
-    public function ConnectAndPublishWithAck($topic, $msg, $success_callback, $client_id=null, $publish_ack_timeout_seconds = null)
+    public function ConnectAndPublishWithAck($publish_topic, $subscribe_topic, $msg, $success_callback, $client_id=null, $publish_ack_timeout_seconds = null)
     {
         $id = empty($client_id) ?  rand(0,999) : $client_id;
 
@@ -110,16 +110,16 @@ class Mqtt
         {
             $is_success = false; // Value to check if ack is ok
             $mutex = false; // Semaphore used to avoid the execution ends before success callback is verified
-            $topics[$topic] = array("qos" => 0, "function" => function($topic, $msg) use(&$is_success, &$mutex, $success_callback) {
+            $topics[$subscribe_topic] = array("qos" => 0, "function" => function($subscribe_topic, $msg) use(&$is_success, &$mutex, $success_callback) {
                 $mutex = true;
-                $result = call_user_func($success_callback, $topic, $msg);
+                $result = call_user_func($success_callback, $subscribe_topic, $msg);
                 if($result === true) $is_success = true;
                 $mutex = false;
             });
 
             $res = $client->subscribe($topics, $this->qos);
 
-            $res = $client->publish($topic,$msg, $this->qos, $this->retain);
+            $res = $client->publish($publish_topic,$msg, $this->qos, $this->retain);
             $starttime = microtime(true);
             $run = true;
             while($client->proc() && !$is_success && ($run || $mutex))
